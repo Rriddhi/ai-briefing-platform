@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+
+# Documentation
+README.md
+PHASES.md
+*.md
+
+# Dependencies
+node_modules
+__pycache__
+*.pyc
+venv
+env
+
+# Build outputs
+.next
+dist
+build
+*.egg-info
+

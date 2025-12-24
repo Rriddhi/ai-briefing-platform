@@ -1,0 +1,16 @@
+{
+  "categories": ["cs.AI", "cs.RO", "cs.LG", "cs.CV", "cs.CL"],
+  "keywords": [
+    "artificial intelligence",
+    "machine learning",
+    "robotics",
+    "autonomous",
+    "neural networks",
+    "deep learning",
+    "large language models",
+    "computer vision",
+    "natural language processing"
+  ],
+  "max_results_per_category": 50
+}
+
