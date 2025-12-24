@@ -4,6 +4,7 @@ Database connection for worker
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,10 +21,4 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def get_db_session():
     """Get database session"""
     return SessionLocal()
-
-
-# Import models
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'api'))
-from models import *  # noqa
 
