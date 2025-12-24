@@ -13,6 +13,85 @@
     "name": "The Verge - AI",
     "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
     "enabled": true
+  },
+  {
+    "name": "Anthropic Blog",
+    "url": "https://www.anthropic.com/news/rss.xml",
+    "enabled": true,
+    "frontier_lab": "Anthropic",
+    "tier": 1
+  },
+  {
+    "name": "OpenAI Blog",
+    "url": "https://openai.com/blog/rss.xml",
+    "enabled": true,
+    "frontier_lab": "OpenAI",
+    "tier": 1
+  },
+  {
+    "name": "DeepMind Blog",
+    "url": "https://deepmind.google/discover/blog/rss.xml",
+    "enabled": true,
+    "frontier_lab": "DeepMind",
+    "tier": 1
+  },
+  {
+    "name": "Google AI Blog",
+    "url": "https://ai.googleblog.com/feeds/posts/default",
+    "enabled": true,
+    "frontier_lab": "Google AI",
+    "tier": 1
+  },
+  {
+    "name": "Meta AI Research",
+    "url": "https://ai.meta.com/blog/feed/",
+    "enabled": true,
+    "frontier_lab": "Meta AI",
+    "tier": 1
+  },
+  {
+    "name": "Microsoft Research AI",
+    "url": "https://www.microsoft.com/en-us/research/feed/",
+    "enabled": true,
+    "frontier_lab": "Microsoft Research",
+    "tier": 1
+  },
+  {
+    "name": "Nature Medicine News",
+    "url": "https://www.nature.com/nm.rss",
+    "enabled": true,
+    "medicine_focused": true
+  },
+  {
+    "name": "NEJM AI Perspectives",
+    "url": "https://www.nejm.org/action/showFeed?type=etoc&feed=rss&jc=aim",
+    "enabled": true,
+    "medicine_focused": true
+  },
+  {
+    "name": "STAT News - AI in Healthcare",
+    "url": "https://www.statnews.com/tag/artificial-intelligence/feed/",
+    "enabled": true,
+    "medicine_focused": true
+  },
+  {
+    "name": "Healthcare IT News - AI",
+    "url": "https://www.healthcareitnews.com/rss-feeds",
+    "enabled": true,
+    "medicine_focused": true
+  },
+  {
+    "name": "FDA News - Digital Health",
+    "url": "https://www.fda.gov/news-events/press-announcements/rss.xml",
+    "enabled": true,
+    "medicine_focused": true,
+    "regulatory": true
+  },
+  {
+    "name": "NIH News - AI/ML",
+    "url": "https://www.nih.gov/news-events/news-releases/rss.xml",
+    "enabled": true,
+    "medicine_focused": true,
+    "regulatory": true
   }
 ]
-

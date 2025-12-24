@@ -12,6 +12,30 @@ import logging
 from sqlalchemy.orm import Session
 
 from .models import Source, RawItem, SourceType
+from urllib.parse import urlparse
+
+# Frontier lab domains and identifiers
+FRONTIER_LABS = {
+    "anthropic.com": "Anthropic",
+    "openai.com": "OpenAI",
+    "deepmind.com": "DeepMind",
+    "google.com": "Google AI",  # ai.googleblog.com, research.google
+    "googleblog.com": "Google AI",
+    "meta.com": "Meta AI",
+    "facebook.com": "Meta AI",
+    "microsoft.com": "Microsoft Research",
+    "microsoftresearch.com": "Microsoft Research"
+}
+
+# arXiv author patterns for frontier labs
+ARXIV_LAB_PATTERNS = {
+    "Anthropic": ["anthropic", "anthropic ai"],
+    "OpenAI": ["openai", "open ai"],
+    "DeepMind": ["deepmind", "deep mind"],
+    "Google AI": ["google research", "google ai", "google brain"],
+    "Meta AI": ["meta ai", "facebook ai research", "fair"],
+    "Microsoft Research": ["microsoft research", "msr"]
+}
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +63,18 @@ def load_arxiv_config() -> Dict:
         return {"categories": [], "keywords": [], "max_results_per_category": 50}
 
 
+def detect_frontier_lab_from_url(url: str) -> str:
+    """Detect frontier lab from URL"""
+    parsed = urlparse(url)
+    domain = parsed.netloc.lower()
+    
+    for lab_domain, lab_name in FRONTIER_LABS.items():
+        if lab_domain in domain:
+            return lab_name
+    
+    return None
+
+
 def ingest_rss_feeds(db) -> int:
     """Ingest items from RSS feeds"""
     feeds = load_rss_config()
@@ -48,21 +84,29 @@ def ingest_rss_feeds(db) -> int:
         try:
             logger.info(f"Ingesting RSS feed: {feed_config['name']}")
             
+            # Check if this is a frontier lab feed
+            frontier_lab = feed_config.get('frontier_lab')
+            source_type = SourceType.PRIMARY_LAB if frontier_lab else SourceType.RSS
+            
             # Get or create source
             source = db.query(Source).filter(
-                Source.url == feed_config['url'],
-                Source.source_type == SourceType.RSS
+                Source.url == feed_config['url']
             ).first()
             
             if not source:
                 source = Source(
                     name=feed_config['name'],
                     url=feed_config['url'],
-                    source_type=SourceType.RSS,
+                    source_type=source_type,
                     is_active=True
                 )
                 db.add(source)
                 db.flush()
+            else:
+                # Update source type if it's a frontier lab
+                if frontier_lab and source.source_type != SourceType.PRIMARY_LAB:
+                    source.source_type = SourceType.PRIMARY_LAB
+                    db.flush()
             
             # Parse feed
             parsed = feedparser.parse(feed_config['url'])
@@ -75,6 +119,11 @@ def ingest_rss_feeds(db) -> int:
                 
                 if existing:
                     continue
+                
+                # Detect frontier lab from URL if not in config
+                item_frontier_lab = frontier_lab
+                if not item_frontier_lab:
+                    item_frontier_lab = detect_frontier_lab_from_url(entry.get('link', ''))
                 
                 # Parse published date
                 published_at = None
@@ -89,7 +138,8 @@ def ingest_rss_feeds(db) -> int:
                     title=entry.get('title', 'Untitled'),
                     url=entry.get('link', ''),
                     content=entry.get('summary', ''),
-                    published_at=published_at
+                    published_at=published_at,
+                    frontier_lab=item_frontier_lab
                 )
                 db.add(item)
                 count += 1
@@ -148,12 +198,24 @@ def ingest_arxiv(db) -> int:
                 if existing:
                     continue
                 
+                # Detect frontier lab from author affiliations
+                frontier_lab = None
+                authors_str = ' '.join([str(a) for a in result.authors]).lower()
+                for lab_name, patterns in ARXIV_LAB_PATTERNS.items():
+                    for pattern in patterns:
+                        if pattern in authors_str:
+                            frontier_lab = lab_name
+                            break
+                    if frontier_lab:
+                        break
+                
                 item = RawItem(
                     source_id=source.id,
                     title=result.title,
                     url=result.entry_id,
                     content=result.summary,
-                    published_at=result.published
+                    published_at=result.published,
+                    frontier_lab=frontier_lab
                 )
                 db.add(item)
                 count += 1

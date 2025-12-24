@@ -14,6 +14,14 @@ import enum
 class SourceType(str, enum.Enum):
     RSS = "rss"
     ARXIV = "arxiv"
+    PRIMARY_LAB = "primary_lab"
+
+
+class ClinicalMaturityLevel(str, enum.Enum):
+    EXPLORATORY = "exploratory"
+    CLINICALLY_VALIDATED = "clinically_validated"
+    REGULATORY_RELEVANT = "regulatory_relevant"
+    APPROVED_DEPLOYED = "approved_deployed"
 
 
 # Association tables
@@ -66,6 +74,7 @@ class RawItem(Base):
     published_at = Column(DateTime(timezone=True), nullable=True)
     ingested_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    frontier_lab = Column(String(100), nullable=True, index=True)  # e.g., "Anthropic", "OpenAI", "DeepMind"
 
     source = relationship("Source", back_populates="raw_items")
     clusters = relationship("Cluster", secondary=cluster_items, back_populates="raw_items")
@@ -97,6 +106,7 @@ class Cluster(Base):
     what_to_watch_next = Column(Text, nullable=True)
     score = Column(Float, nullable=False, index=True)  # Overall score for ranking
     ranking_rationale = Column(Text, nullable=True)  # Explainable ranking reason
+    clinical_maturity_level = Column(SQLEnum(ClinicalMaturityLevel), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

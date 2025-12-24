@@ -47,6 +47,7 @@ class StoryItemResponse(BaseModel):
     score_breakdown: Optional[ScoreBreakdownResponse]
     citations: List[CitationResponse]
     topics: List[TopicResponse]
+    clinical_maturity_level: Optional[str] = None
     created_at: datetime
     
     class Config:

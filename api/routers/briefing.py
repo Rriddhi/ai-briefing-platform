@@ -55,6 +55,7 @@ def cluster_to_story_response(cluster: Cluster) -> StoryItemResponse:
         score_breakdown=score_breakdown,
         citations=citations,
         topics=topics,
+        clinical_maturity_level=cluster.clinical_maturity_level.value if cluster.clinical_maturity_level else None,
         created_at=cluster.created_at
     )
 

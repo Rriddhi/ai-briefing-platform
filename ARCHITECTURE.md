@@ -187,6 +187,70 @@ docker compose up
 - Format: `TIMESTAMP - MODULE - LEVEL - MESSAGE`
 - Worker logs show agent stages and results
 
+## Special Handling: Medicine × AI and Frontier Labs
+
+### Medicine × AI as First-Class Vertical
+
+**Status**: Medicine & Healthcare AI is treated as a first-class vertical with special handling throughout the pipeline.
+
+**RSS Feeds**: Dedicated medicine-focused sources including:
+- Nature Medicine News
+- NEJM AI Perspectives  
+- STAT News - AI in Healthcare
+- Healthcare IT News - AI
+- FDA News - Digital Health (regulatory)
+- NIH News - AI/ML (regulatory)
+
+**Tagging**: Medicine topics use lower keyword threshold (1 match vs 2) to ensure comprehensive coverage.
+
+**Scoring (Editor Agent)**:
+- **Credibility Weight**: Increased from 20% to 30% for medicine-tagged clusters
+- **Novelty Weight**: Decreased from 15% to 10% (regulatory relevance can outweigh recency)
+- **FDA/NIH Sources**: Maximum credibility (0.95) even with single source
+- **Regulatory Relevance**: Can maintain high novelty scores even for older items (up to 30 days)
+- **Clinical Maturity Levels**: 
+  - `exploratory`: Initial research
+  - `clinically_validated`: Peer-reviewed evidence
+  - `regulatory_relevant`: FDA/NIH involvement
+  - `approved_deployed`: Regulatory approval granted
+
+**Ranking Priority**: FDA/NIH regulatory updates can rank above general AI model releases due to increased credibility weight and regulatory relevance scoring.
+
+**Writer**: Medicine content emphasizes clinical evidence, regulatory pathways, and real-world deployment implications.
+
+### Frontier Labs as Primary Sources
+
+**Tier 1 Lab Sources**:
+- Anthropic Blog
+- OpenAI Blog
+- DeepMind Blog
+- Google AI Blog
+- Meta AI Research
+- Microsoft Research AI
+
+**Detection**:
+- **RSS Feeds**: Domain-based detection + explicit configuration
+- **arXiv**: Author affiliation pattern matching
+- **Marking**: Items marked with `frontier_lab` field and `source_type = PRIMARY_LAB`
+
+**Tagging**:
+- Frontier lab items auto-tagged with lab-default topics (general-ai, policy, human-centered-ai as appropriate)
+- Anthropic policy/safety content auto-tagged with both `ai-policy-governance` and `human-centered-ai`
+- Domain-specific tags (e.g., medicine) preserved if applicable
+
+**Scoring (Editor Agent)**:
+- **Credibility**: Maximum (0.95) for frontier lab sources
+- **Impact**: High (0.95) even for single-item clusters
+- **Corroboration**: Reduced requirement (0.9 score even with single source)
+- **Ranking**: Single lab announcement can rank #1 without external media confirmation
+
+**Writer**:
+- **First Sentence**: Must explicitly name the lab (e.g., "Anthropic announced...", "OpenAI released...")
+- **Framing**: Presented as primary announcement, not secondary reporting
+- **Implications**: Includes downstream research, deployment, and policy implications
+
+**Rationale**: Frontier labs drive the AI field's direction. Their primary announcements are authoritative sources that don't require external validation to rank highly.
+
 ## Future Improvements
 
 1. **Clustering**: Upgrade to embeddings-based similarity
